@@ -10,7 +10,7 @@ const Message = require('./message.model');
 
 mongoose.set('useFindAndModify',false);
 //log queries
-mongoose.set('debug', true);
+mongoose.set('debug', false);
 
 mongoose.connect(
      process.env.MONGO_URI,

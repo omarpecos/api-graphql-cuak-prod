@@ -73,14 +73,14 @@ const HttpServer = http.createServer(app);
 server.installSubscriptionHandlers(HttpServer);
 
 //app.listen
-HttpServer.listen({ port: PORT }, () => {
+HttpServer.listen(PORT,() => {
 
     console.log( 
-        `API grahpQL escuchando en http://localhost:${PORT}${server.graphqlPath}`
+        `API grahpQL escuchando en https://<tuURL>${server.graphqlPath}`
         );
     // console.log(db);
     console.log(
-        `Suscripciones listas en ws://localhost:${PORT}${server.subscriptionsPath}`
+        `Suscripciones listas en wss://<tuURL>${server.subscriptionsPath}`
         );
 });
 
