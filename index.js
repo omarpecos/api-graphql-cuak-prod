@@ -2,6 +2,7 @@ require('dotenv').config();
 
 //requires
 const express = require('express');
+const mongoose = require('mongoose');
 const { ApolloServer, PubSub } = require('apollo-server-express');
 const db = require('./models');
 const { typeDefs, resolvers } = require('./schema');
@@ -9,7 +10,10 @@ const { AuthDirective, AdminDirective } = require('./directives');
 const utils = require('./utils');
 const http = require('http');
 const PORT = process.env.PORT || 4000;
-const { Mongoose } = require('mongoose');
+
+mongoose.set('useFindAndModify',false);
+//log queries
+mongoose.set('debug', false);
 
 //Dataloader
 const { MongooseDataloaderFactory } = require('graphql-dataloader-mongoose');
@@ -72,17 +76,38 @@ server.applyMiddleware({ app });
 const HttpServer = http.createServer(app);
 server.installSubscriptionHandlers(HttpServer);
 
-//app.listen
-HttpServer.listen(PORT,() => {
 
-    console.log( 
-        `API grahpQL escuchando en https://<tuURL>${server.graphqlPath}`
-        );
-    // console.log(db);
-    console.log(
-        `Suscripciones listas en wss://<tuURL>${server.subscriptionsPath}`
-        );
-});
+
+
+mongoose.connect(
+     process.env.MONGO_URI,
+     {
+       useNewUrlParser: true, 
+       useUnifiedTopology: true
+     }
+  )
+  .then(() =>{
+  
+      //app.listen
+    HttpServer.listen({ port: PORT }, () => {
+      
+        console.log('Conectado a mongoDB');
+      
+        console.log( 
+            `API grahpQL escuchando en http://localhost:${PORT}${server.graphqlPath}`
+            );
+        // console.log(db);
+        console.log(
+            `Suscripciones listas en ws://localhost:${PORT}${server.subscriptionsPath}`
+            );
+    });
+      
+  })
+  .catch(err =>{
+      console.log('Algo falló con la BBDD!');
+      console.log(err);
+  });
+
 
 
 /* 
